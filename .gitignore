@@ -1,0 +1,13 @@
+#files
+*.out
+*.bin
+
+# Glade files
+*~
+*#
+
+#directories
+**/Unity/**
+**/.vscode/**
+
+**/shr_mem

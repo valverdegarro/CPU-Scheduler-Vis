@@ -1,0 +1,253 @@
+
+
+
+
+======== Ejecucion ========
+[37m[32mNew 	E->W car spotted (ID: 0). Arriving in 1.18s ...
+
+New 	W->E car spotted (ID: 1). Arriving in 1.18s ...
+
+[0m[0m[37mEntering the bridge Direction: E->W, thread_id: 0
+[0m[37mNew 	W->E car spotted (ID: 3). Arriving in 1.37s ...
+
+[0m[32mNew 	E->W car spotted (ID: 2). Arriving in 2.57s ...
+
+[0m[37mLeaving the bridge Direction: E->W, thread_id: 0
+[0m[32mEntering the bridge Direction: W->E, thread_id: 1
+[0m[37mEntering the bridge Direction: W->E, thread_id: 3
+[0m[37mNew 	W->E car spotted (ID: 4). Arriving in 0.41s ...
+
+[0m[37mEntering the bridge Direction: W->E, thread_id: 4
+[0m[34mNew 	W->E car spotted (ID: 5). Arriving in 0.16s ...
+
+[0m[34mEntering the bridge Direction: W->E, thread_id: 5
+[0m[32mNew 	W->E car spotted (ID: 6). Arriving in 0.57s ...
+
+[0m[32mLeaving the bridge Direction: W->E, thread_id: 1
+[0m[37mLeaving the bridge Direction: W->E, thread_id: 3
+[0m[32mEntering the bridge Direction: W->E, thread_id: 6
+[0m[32mNew 	W->E car spotted (ID: 7). Arriving in 0.55s ...
+
+[0m[34mNew 	E->W car spotted (ID: 8). Arriving in 1.02s ...
+
+[0m[37mLeaving the bridge Direction: W->E, thread_id: 4
+[0m[34mLeaving the bridge Direction: W->E, thread_id: 5
+[0m[34mNew 	W->E car spotted (ID: 9). Arriving in 0.46s ...
+
+[0m[32mLeaving the bridge Direction: W->E, thread_id: 6
+[0m[32mEntering the bridge Direction: E->W, thread_id: 2
+[0m[37mNew 	W->E car spotted (ID: 10). Arriving in 3.72s ...
+
+[0m[34mNew 	E->W car spotted (ID: 11). Arriving in 0.46s ...
+
+[0m[37mNew 	E->W car spotted (ID: 12). Arriving in 2.14s ...
+
+[0m[32mLeaving the bridge Direction: E->W, thread_id: 2
+[0m[32mEntering the bridge Direction: W->E, thread_id: 7
+[0m[34mEntering the bridge Direction: W->E, thread_id: 9
+[0m[32mLeaving the bridge Direction: W->E, thread_id: 7
+[0m[34mLeaving the bridge Direction: W->E, thread_id: 9
+[0m[34mEntering the bridge Direction: E->W, thread_id: 8
+[0m[34mEntering the bridge Direction: E->W, thread_id: 11
+[0m[37mEntering the bridge Direction: E->W, thread_id: 12
+[0m[32mNew 	E->W car spotted (ID: 13). Arriving in 1.51s ...
+
+[0m[34mLeaving the bridge Direction: E->W, thread_id: 8
+[0m[34mLeaving the bridge Direction: E->W, thread_id: 11
+[0m[37mLeaving the bridge Direction: E->W, thread_id: 12
+[0m[37mEntering the bridge Direction: W->E, thread_id: 10
+[0m[36mNew 	W->E car spotted (ID: 14). Arriving in 2.11s ...
+
+[0m[37mNew 	E->W car spotted (ID: 15). Arriving in 0.04s ...
+
+[0m[34mNew 	E->W car spotted (ID: 16). Arriving in 0.43s ...
+
+[0m[34mNew 	E->W car spotted (ID: 17). Arriving in 2.61s ...
+
+[0m[37mLeaving the bridge Direction: W->E, thread_id: 10
+[0m[32mEntering the bridge Direction: E->W, thread_id: 13
+[0m[37mEntering the bridge Direction: E->W, thread_id: 15
+[0m[34mEntering the bridge Direction: E->W, thread_id: 16
+[0m[34mLeaving the bridge Direction: E->W, thread_id: 16
+[37mLeaving the bridge Direction: E->W, thread_id: 15
+[0m[32m[0mLeaving the bridge Direction: E->W, thread_id: 13
+[0m[36mEntering the bridge Direction: W->E, thread_id: 14
+[0m[32mNew 	W->E car spotted (ID: 18). Arriving in 0.38s ...
+
+[0m[32mEntering the bridge Direction: W->E, thread_id: 18
+[0m[36mLeaving the bridge Direction: W->E, thread_id: 14
+[0m[32mLeaving the bridge Direction: W->E, thread_id: 18
+[0m[34mEntering the bridge Direction: E->W, thread_id: 17
+[0m[35mNew 	E->W car spotted (ID: 19). Arriving in 0.43s ...
+
+[0m[35mEntering the bridge Direction: E->W, thread_id: 19
+[0m[34mLeaving the bridge Direction: E->W, thread_id: 17
+[0m[35mLeaving the bridge Direction: E->W, thread_id: 19
+[0m
+
+
+
+======== Resumen ========
+[37mNew 	E->W car spotted (ID: 0). Arriving in 1.18s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 0
+
+Leaving the bridge Direction: E->W, thread_id: 0
+
+
+[0m[32mNew 	W->E car spotted (ID: 1). Arriving in 1.18s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 1
+
+Leaving the bridge Direction: W->E, thread_id: 1
+
+
+[0m[32mNew 	E->W car spotted (ID: 2). Arriving in 2.57s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 2
+
+Leaving the bridge Direction: E->W, thread_id: 2
+
+
+[0m[37mNew 	W->E car spotted (ID: 3). Arriving in 1.37s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 3
+
+Leaving the bridge Direction: W->E, thread_id: 3
+
+
+[0m[37mNew 	W->E car spotted (ID: 4). Arriving in 0.41s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 4
+
+Leaving the bridge Direction: W->E, thread_id: 4
+
+
+[0m[34mNew 	W->E car spotted (ID: 5). Arriving in 0.16s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 5
+
+Leaving the bridge Direction: W->E, thread_id: 5
+
+
+[0m[32mNew 	W->E car spotted (ID: 6). Arriving in 0.57s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 6
+
+Leaving the bridge Direction: W->E, thread_id: 6
+
+
+[0m[32mNew 	W->E car spotted (ID: 7). Arriving in 0.55s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 7
+
+Leaving the bridge Direction: W->E, thread_id: 7
+
+
+[0m[34mNew 	E->W car spotted (ID: 8). Arriving in 1.02s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 8
+
+Leaving the bridge Direction: E->W, thread_id: 8
+
+
+[0m[34mNew 	W->E car spotted (ID: 9). Arriving in 0.46s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 9
+
+Leaving the bridge Direction: W->E, thread_id: 9
+
+
+[0m[37mNew 	W->E car spotted (ID: 10). Arriving in 3.72s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 10
+
+Leaving the bridge Direction: W->E, thread_id: 10
+
+
+[0m[34mNew 	E->W car spotted (ID: 11). Arriving in 0.46s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 11
+
+Leaving the bridge Direction: E->W, thread_id: 11
+
+
+[0m[37mNew 	E->W car spotted (ID: 12). Arriving in 2.14s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 12
+
+Leaving the bridge Direction: E->W, thread_id: 12
+
+
+[0m[32mNew 	E->W car spotted (ID: 13). Arriving in 1.51s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 13
+
+Leaving the bridge Direction: E->W, thread_id: 13
+
+
+[0m[36mNew 	W->E car spotted (ID: 14). Arriving in 2.11s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 14
+
+Leaving the bridge Direction: W->E, thread_id: 14
+
+
+[0m[37mNew 	E->W car spotted (ID: 15). Arriving in 0.04s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 15
+
+Leaving the bridge Direction: E->W, thread_id: 15
+
+
+[0m[34mNew 	E->W car spotted (ID: 16). Arriving in 0.43s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 16
+
+Leaving the bridge Direction: E->W, thread_id: 16
+
+
+[0m[34mNew 	E->W car spotted (ID: 17). Arriving in 2.61s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 17
+
+Leaving the bridge Direction: E->W, thread_id: 17
+
+
+[0m[32mNew 	W->E car spotted (ID: 18). Arriving in 0.38s ...
+
+
+Entering the bridge Direction: W->E, thread_id: 18
+
+Leaving the bridge Direction: W->E, thread_id: 18
+
+
+[0m[35mNew 	E->W car spotted (ID: 19). Arriving in 0.43s ...
+
+
+Entering the bridge Direction: E->W, thread_id: 19
+
+Leaving the bridge Direction: E->W, thread_id: 19
+
+
+[0m[33mExiting create_cars...
+
+[0m

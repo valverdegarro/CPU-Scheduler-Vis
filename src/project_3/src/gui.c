@@ -14,6 +14,7 @@ GtkApplication *app;
 
 typedef struct {
     int num_tasks;
+    GtkWidget *parent_window;
     GtkWidget **exec_time; // array with pointers to the execution time widget for each task
     GtkWidget **period; // array with pointers to the period time widget for each task
     GtkWidget *button_rm; //single element to the rm check component
@@ -45,6 +46,17 @@ gui_config *prepare_config(widgets_t *w) {
     return config;
 }
 
+bool valid_config(gui_config *config, int *invalid_task) {
+    for (int i = 0; i < config->num_tasks; i++) {
+        if (config->task_config[i].period <  config->task_config[i].execution) {
+            *invalid_task = i;
+            return false;
+        }
+    }
+
+    return true;
+}
+
 // INSERT YOUR CODE HERE: add the actual function that generates the pdf here
 void execute(gui_config *config) {
     printf("ss enabled %d\n", config->single_slide);
@@ -60,11 +72,52 @@ void execute(gui_config *config) {
     printf("-------------------------------------\n");
 }
 
+void show_popup_error(GtkWidget* pWindow, int invalid_task) {
+    GtkWidget *popup_window;
+    gchar *text;
+    GtkWidget *grid;
+    GtkWidget *label;
+
+    popup_window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW (popup_window), "ERROR");
+    gtk_container_set_border_width (GTK_CONTAINER (popup_window), 10);
+    gtk_window_set_resizable(GTK_WINDOW (popup_window), FALSE);
+    gtk_widget_set_size_request(popup_window, 150, 150);
+    gtk_window_set_transient_for(GTK_WINDOW (popup_window),GTK_WINDOW (pWindow));
+    gtk_window_set_position(GTK_WINDOW (popup_window),GTK_WIN_POS_CENTER);
+
+    // Build the grid
+    grid = gtk_grid_new ();
+    gtk_grid_set_column_homogeneous(GTK_GRID (grid), TRUE);
+    gtk_grid_set_column_spacing(GTK_GRID (grid), 5);
+    gtk_grid_set_row_homogeneous(GTK_GRID (grid), TRUE);
+    gtk_grid_set_row_spacing(GTK_GRID (grid), 1);
+    gtk_container_add(GTK_CONTAINER(popup_window), grid);
+
+    // The label indicating the task with the error
+    text = g_strdup_printf("El periodo de la tarea %d es menor que su tiempo de ejecucion", invalid_task);
+    label = gtk_label_new(text);
+    gtk_grid_attach(GTK_GRID(grid), label, 0, 9, 6, 1);
+
+
+    gtk_widget_show_all(popup_window);
+    gtk_widget_grab_focus (popup_window);
+}
+
 void gen_pdf(GtkWidget *widget, gpointer user_data) {
+    int invalid_task;
     widgets_t *w = (widgets_t*)user_data;
 
     // prepare config
     gui_config *config = prepare_config(w);
+
+    // check if config is valid
+    bool is_valid = valid_config(config, &invalid_task);
+    if (!is_valid) {
+        // show pop window with error
+        show_popup_error(w->parent_window, invalid_task);
+        return;
+    }
 
     // replace the code in the following function for the actual code
     execute(config);
@@ -91,6 +144,7 @@ void open_second_window(GtkWidget *widget, gpointer   user_data) {
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Proyecto 3");
     gtk_window_set_default_size(GTK_WINDOW(window), 30, 10);
+    w->parent_window = window;
 
     // Build the grid that contains the rest of components
     grid = gtk_grid_new ();

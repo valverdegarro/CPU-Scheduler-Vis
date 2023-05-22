@@ -1,0 +1,5 @@
+# Latex installation
+
+sudo apt install texlive-latex-recommended
+sudo apt install texlive
+sudo apt install texlive-pictures

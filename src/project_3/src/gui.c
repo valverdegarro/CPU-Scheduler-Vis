@@ -1,5 +1,6 @@
 #include "gui.h"
 #include "common.h"
+#include "latex.h"
 
 #include <gtk/gtk.h>
 
@@ -59,6 +60,8 @@ bool valid_config(gui_config *config, int *invalid_task) {
 
 // INSERT YOUR CODE HERE: add the actual function that generates the pdf here
 void execute(gui_config *config) {
+    int status;
+
     printf("ss enabled %d\n", config->single_slide);
     printf("rm enabled %d\n", config->rm_enabled);
     printf("edf enabled %d\n", config->edf_enabled);
@@ -68,6 +71,12 @@ void execute(gui_config *config) {
     for (int i = 0; i < config->num_tasks; i++) {
         printf("Task %d -period: %d  -exec_time: %d \n", i, config->task_config[i].period, config->task_config[i].execution);
     }
+
+    status = latex_execute(config);
+    if (status != OK) {
+        printf("ERROR GENERATING PDF FILE\n");
+    }
+
 
     printf("-------------------------------------\n");
 }

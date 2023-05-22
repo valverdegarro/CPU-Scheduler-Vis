@@ -1,5 +1,10 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <stdbool.h>
 
+#define FAIL -1
+#define OK 0
 
 typedef struct {
     int execution;
@@ -15,3 +20,5 @@ typedef struct gui_config {
     int num_tasks;
     task_config_t *task_config;
 } gui_config;
+
+#endif // COMMON_H

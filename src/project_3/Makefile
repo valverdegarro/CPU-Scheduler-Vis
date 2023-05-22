@@ -32,6 +32,7 @@ unittest: $(SRC_TEST_FILES)
 	
 clean:
 	$(CLEANUP) $(TARGET)
+	$(CLEANUP) *.aux *.log *.nav *.pdf *.snm *.toc
 
 ci: CFLAGS += -Wall `pkg-config --cflags --libs gtk+-3.0` -export-dynamic
 ci: unittest

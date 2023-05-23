@@ -1,0 +1,342 @@
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND THEMES
+%----------------------------------------------------------------------------------------
+\documentclass[aspectratio=54,xcolor=dvipsnames]{beamer} % 5:4 aspect ratio gives us more vertical space
+\usetheme{Simple}
+
+\usepackage{hyperref}
+\usepackage{graphicx} % Allows including images
+\usepackage{booktabs} % Allows the use of \toprule, \midrule and \bottomrule in tables
+
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} 
+
+\usepackage{pgfgantt}
+
+% Define custom element for deadlines
+\newganttchartelement*{vline}{
+    vline/.style={
+        red, draw, thick, outer sep=0 pt, inner sep=0 pt,
+    }, 
+    vline right shift=-1,
+    vline top shift=0,
+    vline height=1,
+}
+
+% Some variable definitions for playing around
+\def\timemcm{26}
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+% The title
+\title[short title]{Simple Beamer Theme}
+\subtitle{Subtitle}
+
+\author[Au-Thor] {Author}
+\institute[NTU] % Your institution may be shorthand to save space
+{
+    % Your institution for the title page
+    Department \\
+    University 
+    \vskip 3pt
+}
+\date{\today} % Date, can be changed to a custom date
+
+
+%----------------------------------------------------------------------------------------
+%	PRESENTATION SLIDES
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+\begin{frame}
+    % Print the title page as the first slide
+    \titlepage
+\end{frame}
+
+\begin{frame}{Single table}
+
+\textbf{RM:}
+
+\begin{ganttchart}[
+        hgrid,
+        vgrid,
+        x unit=.5cm,
+        y unit title=.5cm,
+        y unit chart=.5cm,
+        title/.style={draw=none, fill=none},
+        include title in canvas=false,
+        vrule/.style={very thick, dotted},
+        expand chart=\textwidth
+    ]{1}{\timemcm}
+
+    % Sets time axis tick marks (TODO: find out how to only show marks every n ticks)
+    \gantttitlelist{1,...,26}{1} \\
+    
+    
+    % Task 1
+    \ganttvline{}{1} % Deadline element, these are drawn at the start of the given timeslot
+    \ganttbar{T1}{1}{1} 
+    
+    \ganttvline{}{7}
+    \ganttbar{}{7}{7}
+    
+    \ganttvline{}{13}
+    \ganttbar{}{13}{13}
+    
+    \ganttvline{}{19}
+    \ganttbar{}{19}{19}
+    
+    \ganttvline{}{25}
+    \ganttbar{}{25}{25}
+    \\ % Notice the explicit line break
+
+
+    % Task 2
+    \ganttvline{}{1}
+    \ganttbar{T2}{2}{3}
+
+    \ganttvline{}{10}
+    \ganttbar{}{10}{11}
+
+    \ganttvline{}{19}
+    \ganttbar{}{20}{21}
+    \\
+
+
+    % Task 3
+    \ganttvline{}{1}
+    \ganttbar{T3}{4}{6}
+    
+    \ganttbar{}{8}{9}
+    
+    \ganttbar{}{12}{12}
+
+    \ganttvline{}{19}
+    \ganttbar{}{22}{24}
+    
+    \ganttbar{}{26}{26}
+
+    % We can use vrules to denote deadline violations
+    %\ganttvrule{T3 is late!}{18}
+    
+\end{ganttchart}
+
+
+
+\end{frame}
+
+\begin{frame}{Triple table}
+
+\textbf{RM:}
+
+\begin{ganttchart}[
+        hgrid,
+        vgrid,
+        x unit=.5cm,
+        y unit title=.5cm,
+        y unit chart=.5cm,
+        title/.style={draw=none, fill=none},
+        include title in canvas=false,
+        vrule/.style={very thick, dotted},
+        expand chart=\textwidth
+    ]{1}{\timemcm}
+
+    % Sets time axis tick marks (TODO: find out how to only show marks every n ticks)
+    \gantttitlelist{1,...,26}{1} \\
+    
+    
+    % Task 1
+    \ganttvline{}{1} % Deadline element, these are drawn at the start of the given timeslot
+    \ganttbar{T1}{1}{1} 
+    
+    \ganttvline{}{7}
+    \ganttbar{}{7}{7}
+    
+    \ganttvline{}{13}
+    \ganttbar{}{13}{13}
+    
+    \ganttvline{}{19}
+    \ganttbar{}{19}{19}
+    
+    \ganttvline{}{25}
+    \ganttbar{}{25}{25}
+    \\ % Notice the explicit line break
+
+
+    % Task 2
+    \ganttvline{}{1}
+    \ganttbar{T2}{2}{3}
+
+    \ganttvline{}{10}
+    \ganttbar{}{10}{11}
+
+    \ganttvline{}{19}
+    \ganttbar{}{20}{21}
+    \\
+
+
+    % Task 3
+    \ganttvline{}{1}
+    \ganttbar{T3}{4}{6}
+    
+    \ganttbar{}{8}{9}
+    
+    \ganttbar{}{12}{12}
+
+    \ganttvline{}{19}
+    \ganttbar{}{22}{24}
+    
+    \ganttbar{}{26}{26}
+
+    % We can use vrules to denote deadline violations
+    %\ganttvrule{T3 is late!}{18}
+    
+\end{ganttchart}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{EDF:}
+
+\begin{ganttchart}[
+        hgrid,
+        vgrid,
+        x unit=.5cm,
+        y unit title=.5cm,
+        y unit chart=.5cm,
+        title/.style={draw=none, fill=none},
+        include title in canvas=false,
+        vrule/.style={very thick, dotted},
+        expand chart=\textwidth
+    ]{1}{\timemcm}
+
+    % Sets time axis tick marks (TODO: find out how to only show marks every n ticks)
+    % Ideally, we should only show this for the first chart in the slide to save space
+    %\gantttitlelist{1,...,26}{1} \\
+    
+    
+    % Task 1
+    \ganttvline{}{1} % Deadline element, these are drawn at the start of the given timeslot
+    \ganttbar{T1}{1}{1} 
+    
+    \ganttvline{}{7}
+    \ganttbar{}{7}{7}
+    
+    \ganttvline{}{13}
+    \ganttbar{}{13}{13}
+    
+    \ganttvline{}{19}
+    \ganttbar{}{19}{19}
+    
+    \ganttvline{}{25}
+    \ganttbar{}{25}{25}
+    \\ % Notice the explicit line break
+
+
+    % Task 2
+    \ganttvline{}{1}
+    \ganttbar{T2}{2}{3}
+
+    \ganttvline{}{10}
+    \ganttbar{}{10}{11}
+
+    \ganttvline{}{19}
+    \ganttbar{}{20}{21}
+    \\
+
+
+    % Task 3
+    \ganttvline{}{1}
+    \ganttbar{T3}{4}{6}
+    
+    \ganttbar{}{8}{9}
+    
+    \ganttbar{}{12}{12}
+
+    \ganttvline{}{19}
+    \ganttbar{}{22}{24}
+    
+    \ganttbar{}{26}{26}
+
+    % We can use vrules to denote deadline violations
+    %\ganttvrule{T3 is late!}{18}
+    
+\end{ganttchart}
+
+% Fitting all three into the same slide is gonna be tricky
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\textbf{LLF:}
+
+\begin{ganttchart}[
+        hgrid,
+        vgrid,
+        x unit=.5cm,
+        y unit title=.5cm,
+        y unit chart=.5cm,
+        title/.style={draw=none, fill=none},
+        include title in canvas=false,
+        vrule/.style={very thick, dotted},
+        expand chart=\textwidth
+    ]{1}{\timemcm}
+
+    % Sets time axis tick marks (TODO: find out how to only show marks every n ticks)
+    %\gantttitlelist{1,...,26}{1} \\
+    
+    
+    % Task 1
+    \ganttvline{}{1} % Deadline element, these are drawn at the start of the given timeslot
+    \ganttbar{T1}{1}{1} 
+    
+    \ganttvline{}{7}
+    \ganttbar{}{7}{7}
+    
+    \ganttvline{}{13}
+    \ganttbar{}{13}{13}
+    
+    \ganttvline{}{19}
+    \ganttbar{}{19}{19}
+    
+    \ganttvline{}{25}
+    \ganttbar{}{25}{25}
+    \\ % Notice the explicit line break
+
+
+    % Task 2
+    \ganttvline{}{1}
+    \ganttbar{T2}{2}{3}
+
+    \ganttvline{}{10}
+    \ganttbar{}{10}{11}
+
+    \ganttvline{}{19}
+    \ganttbar{}{20}{21}
+    \\
+
+
+    % Task 3
+    \ganttvline{}{1}
+    \ganttbar{T3}{4}{6}
+    
+    \ganttbar{}{8}{9}
+    
+    \ganttbar{}{12}{12}
+
+    \ganttvline{}{19}
+    \ganttbar{}{22}{24}
+    
+    \ganttbar{}{26}{26}
+
+    % We can use vrules to denote deadline violations
+    \ganttvrule{T3 is late!}{18}
+    
+\end{ganttchart}
+
+
+\end{frame}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

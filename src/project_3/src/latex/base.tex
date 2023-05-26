@@ -2,9 +2,23 @@
 \usepackage[utf8]{inputenc}
 \usepackage{amssymb}
 \usepackage{colortbl}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} 
+
+\usepackage{pgfgantt}
 
 \usetheme{Madrid}
 \usecolortheme{default}
+
+% Define custom element for deadlines
+\newganttchartelement*{vline}{
+    vline/.style={
+        draw, very thick, outer sep=0 pt, inner sep=0 pt,
+    }, 
+    vline right shift=-1,
+    vline top shift=0,
+    vline height=1,
+}
 
 %------------------------------------------------------------
 \title[Scheduling en Tiempo Real] %optional

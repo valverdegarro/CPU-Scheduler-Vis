@@ -4,6 +4,9 @@
 
 #include "gui.h"
 
+#define MCM 26
+#define NTASKS 3
+
 // Set the following define to 1 if you want to compile with the GUI, 0 otherwise
 // non GUI mode is used for development (faster than using the GUI to execute desired code)
 #define ENABLE_GUI 0
@@ -13,6 +16,7 @@
 #include "common.h" // remove it
 #include <stdlib.h> // remove it
 #include "latex.h"  //remove it
+#include "ttables/ttables.h" // remove it
 
 #endif
 
@@ -38,7 +42,7 @@ int main(int argc, char **argv)
     gui_config config;
     config.single_slide = true;
     config.rm_enabled = true;
-    config.edf_enabled = false;
+    config.edf_enabled = true;
     config.llf_enabled = true;
     config.num_tasks = num_tasks;
     config.task_config = tasks;
@@ -49,8 +53,8 @@ int main(int argc, char **argv)
     return init_gui(argc, argv);
     #endif
 
-    /*
-    char buffer[4096];
+    
+    /*char buffer[4096];
     memset(buffer, 0, 4096);
     
     // Ugly code to initialize timeslots array manually
@@ -88,10 +92,13 @@ int main(int argc, char **argv)
     ts_array[18].deadlines[2] = true;
     
 
-    write_ttable(buffer, ts_array, MCM, NTASKS);
+    // Write some missed deadlines
+    bool misses[] = {false, true, true};
+    int miss_idx = 18;
+
+    write_ttable(buffer, ts_array, MCM, NTASKS, misses, miss_idx);
     printf("%s\n", buffer);
 
-    //return init_gui(argc, argv);
-    */
+    //return init_gui(argc, argv);*/
 
 }

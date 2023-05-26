@@ -6,6 +6,9 @@
 #define FAIL -1
 #define OK 0
 
+#define N_ALGORITHMS 3
+
+
 typedef struct {
     int execution;
     int period;
@@ -26,7 +29,17 @@ typedef struct gui_config {
 typedef struct timeslot_t {
     int task_id;
     bool *deadlines; // Array of size num_tasks, indicates task deadlines for this timeslot
-    //bool missed;
 } timeslot_t;
+
+
+// Contains all the parameters neccesary which are necessary to draw a time table and that can be different
+// between executions.
+// The idea with this is to create an array which contains 3 of these structs to generate the slides
+typedef struct ttable_params {
+    bool enabled;
+    timeslot_t *ts;
+    bool *misses;
+    int miss_idx;
+} ttable_params;
 
 #endif // COMMON_H

@@ -42,4 +42,7 @@
 #define ROW_BREAK "\n\\\\\n\n"
 
 
+#define BEGIN_FRAME "\n\\begin{frame}{Simulación del scheduler}\n\n"
+
+
 #endif // GANTTSTR_H

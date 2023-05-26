@@ -1,5 +1,6 @@
 #include "common.h"
 #include "simulation.h"
+#include "ttables/ttables.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -53,6 +54,39 @@ int gen_algorithm_static_info(gui_config *config, FILE *fptr_out) {
     return OK;
 } 
 
+int gen_execution_tables(gui_config *config, FILE *fptr_out) {
+    ttable_params executions[N_ALGORITHMS];
+    int lcm = 20; //TODO: set this with the results from simulate_*
+
+    for (int i = 0; i < N_ALGORITHMS; i++) {
+        executions[i].ts = NULL;
+        executions[i].miss_idx = -1;
+    }
+
+    if (config->rm_enabled) {
+        
+        executions[0].ts = simulate_rm(config);
+        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
+        //rm_sim.misses = NULL;
+    }
+
+    if (config->edf_enabled) {
+        executions[1].ts = simulate_rm(config); // TODO: change this to simulate_edf
+        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
+        //rm_sim.misses = NULL;
+    }
+
+    if (config->llf_enabled) {
+        executions[2].ts = simulate_rm(config); // TODO: change this to simulate_llf
+        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
+        //rm_sim.misses = NULL;
+    }
+
+    write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+
+    return OK;
+}
+
 int generate_pdf(gui_config *config, FILE *fptr_out) {
     int status;
 
@@ -66,7 +100,8 @@ int generate_pdf(gui_config *config, FILE *fptr_out) {
     // TODO
 
     // Generate execution tables
-    timeslot_t *rm_results = simulate_rm(config);
+    //timeslot_t *rm_results = simulate_rm(config);
+    gen_execution_tables(config, fptr_out);
 
     return OK;
 }
@@ -102,11 +137,11 @@ int latex_execute(gui_config *config) {
     fclose(fptr_out);
 
     // Compile the latex file
-    //system("pdflatex ./src/latex/out.tex");
-    //system("pdflatex ./src/latex/out.tex");
+    system("pdflatex ./src/latex/out.tex");
+    system("pdflatex ./src/latex/out.tex");
 
     // Show the pdf using evince
-    //system("evince out.pdf &");
+    system("evince out.pdf &");
 
     return OK;
 }

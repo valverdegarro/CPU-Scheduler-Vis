@@ -16,7 +16,7 @@ UNITY_ROOT=../Unity
 
 TARGET_BASE=project
 TARGET = $(TARGET_BASE)$(TARGET_EXTENSION)
-SRC_FILES := $(wildcard src/*.c)
+SRC_FILES := $(wildcard src/*.c) $(wildcard src/*/*.c)
 SRC_TEST_FILES=$(UNITY_ROOT)/src/unity.c $(filter-out src/main.c, $(SRC_FILES))  $(wildcard test/*.c)
 INC_DIRS=-Isrc -I$(UNITY_ROOT)/src
 LDFLAGS= -lm

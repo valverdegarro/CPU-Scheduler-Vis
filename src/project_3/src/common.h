@@ -21,4 +21,12 @@ typedef struct gui_config {
     task_config_t *task_config;
 } gui_config;
 
+
+// This struct is shared between the simulator and time table generator to create the gantt charts
+typedef struct timeslot_t {
+    int task_id;
+    bool *deadlines; // Array of size num_tasks, indicates task deadlines for this timeslot
+    //bool missed;
+} timeslot_t;
+
 #endif // COMMON_H

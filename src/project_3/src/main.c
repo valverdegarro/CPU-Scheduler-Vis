@@ -21,14 +21,19 @@ int main(int argc, char **argv)
     #if ENABLE_GUI==0
     
     
-    int num_tasks = 2;
+    int num_tasks = 3;
 
     task_config_t *tasks = (task_config_t*) malloc(sizeof(task_config_t) * num_tasks);
 
-    for (int i = 0; i < num_tasks; i++) {
-        tasks[i].execution = i + 1;
-        tasks[i].period = (i+1)*2;
-    }
+    // Data from https://www.geeksforgeeks.org/rate-monotonic-scheduling/
+    tasks[0].execution = 3;
+    tasks[0].period = 20;
+
+    tasks[1].execution = 2;
+    tasks[1].period = 5;
+
+    tasks[2].execution = 2;
+    tasks[2].period = 10;
 
     gui_config config;
     config.single_slide = true;

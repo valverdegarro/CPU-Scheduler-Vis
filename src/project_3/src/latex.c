@@ -1,4 +1,5 @@
 #include "common.h"
+#include "simulation.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -65,6 +66,7 @@ int generate_pdf(gui_config *config, FILE *fptr_out) {
     // TODO
 
     // Generate execution tables
+    timeslot_t *rm_results = simulate_rm(config);
 
     return OK;
 }
@@ -100,11 +102,11 @@ int latex_execute(gui_config *config) {
     fclose(fptr_out);
 
     // Compile the latex file
-    system("pdflatex ./src/latex/out.tex");
-    system("pdflatex ./src/latex/out.tex");
+    //system("pdflatex ./src/latex/out.tex");
+    //system("pdflatex ./src/latex/out.tex");
 
     // Show the pdf using evince
-    system("evince out.pdf &");
+    //system("evince out.pdf &");
 
     return OK;
 }

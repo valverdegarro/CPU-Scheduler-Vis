@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 typedef struct {
     task_config_t data;
@@ -183,3 +184,134 @@ sim_data_t *simulate_rm(gui_config *config) {
     return result;
 }
 
+
+sim_data_t *simulate_llf(gui_config *config) {
+    int running = -1; // the task that is running
+    sim_data_t *result  = (sim_data_t*)malloc(sizeof(sim_data_t));
+    result->miss_idx = -1;
+    result->misses = (bool*)malloc(sizeof(bool) * config->num_tasks);
+    for (int i =0; i < config->num_tasks; i++) {
+        result->misses[i] = false;
+    }
+
+    runtime_t *runtime = (runtime_t*) malloc(sizeof(runtime_t) * config->num_tasks);
+
+    for (int i = 0; i < config->num_tasks; i++) {
+        runtime[i].data = config->task_config[i];
+        runtime[i].task_id = i;
+        runtime[i].time_left = 0; //config->task_config[i].execution;
+    }
+
+    
+    // Calculate the hyperperiod (lcm of periods)
+    int *periods = (int*) malloc(sizeof(int) * config->num_tasks);
+    for (int i =0; i < config->num_tasks; i++) {
+        periods[i] = config->task_config[i].period;
+    }
+
+    int lcm = get_lcm_from_array(config->num_tasks, periods); // get lowest common multiple
+
+
+    // initialize the structure with simulated data
+    timeslot_t *sim_data = (timeslot_t *) malloc(sizeof(timeslot_t) * lcm);
+    for (int i = 0; i < lcm; i++) {
+        sim_data[i].task_id = -1;
+        sim_data[i].deadlines = (bool *) malloc(sizeof(bool) * config->num_tasks);
+        for (int j = 0; j < config->num_tasks; j++) {
+            sim_data[i].deadlines[j] = false;
+        }
+    }
+    
+    
+    // Fill the deadlines for each task
+    for (int i=0; i < config->num_tasks; i++) {
+        int period = config->task_config[i].period;
+
+        for (int j=0; j < lcm; j += period) {
+            //printf("i: %d j: %d \n", i, j);
+            sim_data[j].deadlines[i] = true;
+        }
+    }
+
+
+    bool missed = false; // For signaling when a deadline was missed
+    int laxities[config->num_tasks];
+    int least_lax_task;
+    int smallest_laxity;
+
+
+    // Start simulating
+    // Note that we're doing an extra loop to check for deadline misses at the very end
+    for (int t = 0; t < lcm + 1; t++) {
+
+        least_lax_task = -1;
+        smallest_laxity = INT_MAX;
+
+        for (int i = 0; i < config->num_tasks; i++) {
+
+            // The extra loop at the end always has all the deadlines
+            bool deadline = t == lcm ? true : sim_data[t].deadlines[i];
+
+            // Whenever a deadline is reached:
+            if (deadline) {
+
+                // Check if it was missed by checking its time left
+                if (runtime[i].time_left != 0) {
+                    result->miss_idx = t; 
+                    result->misses[i] = true;
+                    missed = true;
+                }
+
+
+                // Trigger a new task by resetting its time left and laxity
+                runtime[i].time_left = runtime[i].data.execution;
+                laxities[i] = runtime[i].data.period - runtime[i].data.execution;
+            }
+
+
+            // Keep track of the task with the smallest laxity for scheduling
+            // Doing it this way also means that ties are broken by smallest task id
+
+            if (laxities[i] < smallest_laxity) {
+                least_lax_task = i;
+                smallest_laxity = laxities[i];
+            }
+        }
+
+
+        // Nothing else to simulate, the plane crashed.
+        if (missed) {
+            break;
+        }
+
+
+        // Schedule the task with the smallest laxity, this can be -1 if there are no tasks
+        running = least_lax_task;
+
+        if(running != -1) {
+            sim_data[t].task_id = running;
+            runtime[running].time_left--;       
+        }
+
+
+        // Do another loop over tasks to update the laxity of each one
+        for (int i = 0; i < config->num_tasks; i++) {
+            if (runtime[i].time_left == 0) {
+
+                laxities[i] = INT_MAX; // Completed tasks have "infinite" laxity
+
+            } else if(runtime[i].task_id != running) {
+
+                laxities[i]--;
+
+            } // The last case is a running and not yet completed task, whose laxity stays the same
+        }
+    }
+
+
+    // Finish building the sim_data_t struct and return
+    result->ts = sim_data;
+    result->ts_size = lcm;
+
+    return result;
+}

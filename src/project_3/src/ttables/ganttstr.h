@@ -6,16 +6,6 @@
 // It would be nicer to move this into individual files and read them into memory
 
 
-// TODO: move this to the preamble in base.tex
-#define GANTT_VLINE "\\newganttchartelement*{vline}{\n"\
-                    "   vline/.style={\n"\
-                    "   red, draw, thick, outer sep=0 pt, inner sep=0 pt,\n"\
-                    "}, \n"\
-                    "   vline right shift=-1,\n"\
-                    "   vline top shift=0,\n"\
-                    "   vline height=1,\n}\n\n"
-
-
 #define GANTT_HEADER "\\begin{ganttchart}[\n"\
                      "  hgrid,\n"\
                      "  vgrid,\n"\

@@ -72,16 +72,16 @@ int gen_execution_tables(gui_config *config, FILE *fptr_out) {
     }
 
     if (config->edf_enabled) {
-        sim_data_t * val = simulate_rm(config);
-        executions[1].ts = val->ts; // TODO: change this to simulate_edf
+        sim_data_t * val = simulate_edf(config);
+        executions[1].ts = val->ts;
         executions[1].miss_idx = val->miss_idx;
         executions[1].misses = val->misses;
         lcm = val->ts_size;
     }
 
     if (config->llf_enabled) {
-        sim_data_t * val = simulate_rm(config);
-        executions[2].ts = val->ts; // TODO: change this to simulate_llf
+        sim_data_t * val = simulate_rm(config); // TODO: change this to simulate_llf
+        executions[2].ts = val->ts;
         executions[2].miss_idx = val->miss_idx;
         executions[2].misses = val->misses;
         lcm = val->ts_size;

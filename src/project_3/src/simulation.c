@@ -7,6 +7,7 @@ typedef struct {
     task_config_t data;
     int time_left;
     int task_id;
+    bool deadline_completed;
 } runtime_t;
 
 int lcm(int a, int b)
@@ -60,6 +61,130 @@ int check_highest_priority(int current_task, int num_tasks, runtime_t *runtime) 
         }
     }
     return -1;
+}
+
+int get_task_closest_deadline(runtime_t *runtime, timeslot_t *ts, int lcm, int current_slot, int current_active_task, int num_tasks) {
+    int task = -1;
+    bool stop = false;
+
+    printf("ultimo 1 %d\n", ts[lcm-1].deadlines[0]);
+    printf("ultimo 2 %d\n", ts[lcm-1].deadlines[1]);
+    printf("ultimo 3 %d\n", ts[lcm-1].deadlines[2]);
+
+    for(int i=current_slot+1; i < lcm && !stop ; i++) {
+        for (int j = 0; j < num_tasks; j++) {
+            if (ts[i].deadlines[j] && !runtime[j].deadline_completed ) {
+                task = j;
+                stop = true;
+                if (task != -1 && task == current_active_task) {
+                    // stop looking for the tasks and prefer current task
+                    break;
+                }
+            }
+        }
+    }
+
+    return task;
+}
+
+// Using preemptive mode
+sim_data_t *simulate_edf(gui_config *config) {
+    sim_data_t *result  = (sim_data_t*)malloc(sizeof(sim_data_t));
+    result->miss_idx = -1;
+    result->misses = (bool*)malloc(sizeof(bool) * config->num_tasks);
+    for (int i =0; i < config->num_tasks; i++) {
+        result->misses[i] = false;
+    }
+
+    // Get the lcm
+    int *periods = (int*) malloc(sizeof(int) * config->num_tasks);
+    for (int i =0; i < config->num_tasks; i++) {
+        periods[i] = config->task_config[i].period;
+    }
+    int lcm = get_lcm_from_array(config->num_tasks, periods) + 1; // +1 because the last one is needed just to fill the last fields correctly
+    result->ts_size = lcm-1; // the pdf gen does not need to know about the last one
+
+    // Copy the data to the runtime
+    runtime_t *runtime = (runtime_t*) malloc(sizeof(runtime_t) * config->num_tasks);
+    for (int i = 0; i < config->num_tasks; i++) {
+        runtime[i].data = config->task_config[i];
+        runtime[i].task_id = i;
+        runtime[i].time_left = config->task_config[i].execution;
+        runtime[i].deadline_completed = false;
+    }
+
+    // initialize the structure with simulated data
+    timeslot_t *ts = (timeslot_t *) malloc(sizeof(timeslot_t) * lcm);
+    result->ts = ts;
+    for (int i = 0; i < lcm; i++) {
+        ts[i].task_id = -1;
+        ts[i].deadlines = (bool *) malloc(sizeof(bool) * config->num_tasks);
+        for (int j = 0; j < config->num_tasks; j++) {
+            ts[i].deadlines[j] = false;
+        }
+    }
+
+    // Fill the deadlines for each task
+    for (int i=0; i < config->num_tasks; i++) {
+        for (int j=0; j < lcm; j += config->task_config[i].period) {
+            ts[j].deadlines[i] = true;
+        }
+    }
+
+    /*
+     * Simulate
+    */
+    bool run = true;
+    int next_task;
+    for(int i=0; i < lcm && run; i++) {
+        printf("-------------------------------- slot: %d -------------------------------- \n", i);
+
+        // Update time left (a new task is available)
+        for (int j=0; j < config->num_tasks; j++) {
+            if (ts[i].deadlines[j] && i != 0) { // skip first slot because its a deadline for all
+                if (runtime[j].time_left != 0) {
+                    result->miss_idx = i; // this timeslot missed
+                    result->misses[j] = true;
+                    run = false; // stop simulating because we found a deadline miss
+                } else {
+                    // When this update happens runtime[k].time_left must be zero, if not then a deadline miss ocurred
+                    runtime[j].time_left = config->task_config[j].execution;
+                    runtime[j].deadline_completed = false;
+                }
+            }
+        }
+
+
+        // Look for the next task with the closest deadline
+        next_task = get_task_closest_deadline(runtime, ts, lcm, i, next_task, config->num_tasks);
+        printf("retorna %d\n", next_task);
+        if (next_task != -1) {
+            // decrease running time
+            runtime[next_task].time_left -= 1;
+            if (runtime[next_task].time_left == 0) {
+                runtime[next_task].deadline_completed = true;
+            }
+        }
+
+        ts[i].task_id = next_task;
+
+        printf("-------------------------------- END SLOT %d -------------------------------- \n\n\n", i);
+    }
+
+    printf("EDF execution results\n");
+
+    for (int i =0; i < lcm-1; i++) {
+        printf("slot: %d ----> task: %d \n", i, ts[i].task_id+1); // 0 means empty slot when printing
+    }
+    printf("MISS IDX: %d\n", result->miss_idx);
+    printf("Failed: [ ");
+    for(int i =0; i < config->num_tasks; i++) {
+        printf("%d ", result->misses[i]);
+    }
+    printf("]\n");
+
+
+    return result;
 }
 
 sim_data_t *simulate_rm(gui_config *config) {
@@ -141,7 +266,7 @@ sim_data_t *simulate_rm(gui_config *config) {
             running = runtime[config->num_tasks - 1].task_id; // Look for all tasks
         }
 
-        // Next task must be one with highest priority or the task it self
+        // Next task must be one with highest priority or the task itself
         running = check_highest_priority(running, config->num_tasks, runtime); // it is possible that the highest priority is the task itself
         
         if (running != -1) { // there is a task to run
@@ -166,7 +291,7 @@ sim_data_t *simulate_rm(gui_config *config) {
         //printf("-------------------------------- END SLOT %d -------------------------------- \n\n\n", i);
     }
 
-    printf("execution results\n");
+    printf("RM execution results\n");
 
     for (int i =0; i < lcm; i++) {
         printf("slot: %d ----> task: %d \n", i, sim_data[i].task_id+1); // 0 means empty slot when printing

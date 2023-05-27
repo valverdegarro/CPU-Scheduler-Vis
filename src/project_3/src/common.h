@@ -31,6 +31,13 @@ typedef struct timeslot_t {
     bool *deadlines; // Array of size num_tasks, indicates task deadlines for this timeslot
 } timeslot_t;
 
+typedef struct sim_data_t {
+    timeslot_t *ts;
+    int ts_size;
+    bool *misses;
+    int miss_idx;
+} sim_data_t;
+
 
 // Contains all the parameters neccesary which are necessary to draw a time table and that can be different
 // between executions.

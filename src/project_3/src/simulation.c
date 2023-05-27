@@ -42,12 +42,19 @@ int period_compare(const void *a, const void *b) {
     return (t_a->data.period - t_b->data.period);
 }
 
-int check_highest_priority(int current_task, runtime_t *runtime) {
+int check_highest_priority(int current_task, int num_tasks, runtime_t *runtime) {
     if (current_task == -1 ) {
         return -1;
     }
+    int current_task_index = 0;
+    for (int i=0; i < num_tasks; i++) {
+        if (current_task == runtime[i].task_id) {
+            current_task_index = i;
+        }
+    }
 
-    for (int i =0; i <= current_task; i++) {
+
+    for (int i =0; i <= current_task_index; i++) {
         if (runtime[i].time_left != 0) {
             return runtime[i].task_id;
         }
@@ -55,8 +62,14 @@ int check_highest_priority(int current_task, runtime_t *runtime) {
     return -1;
 }
 
-timeslot_t *simulate_rm(gui_config *config) {
+sim_data_t *simulate_rm(gui_config *config) {
     int running = -1; // the task that is running
+    sim_data_t *result  = (sim_data_t*)malloc(sizeof(sim_data_t));
+    result->miss_idx = -1;
+    result->misses = (bool*)malloc(sizeof(bool) * config->num_tasks);
+    for (int i =0; i < config->num_tasks; i++) {
+        result->misses[i] = false;
+    }
 
     runtime_t *runtime = (runtime_t*) malloc(sizeof(runtime_t) * config->num_tasks);
 
@@ -71,7 +84,7 @@ timeslot_t *simulate_rm(gui_config *config) {
 
     int *periods = (int*) malloc(sizeof(int) * config->num_tasks);
     for (int i =0; i < config->num_tasks; i++) {
-        periods[i] = config->task_config->period;
+        periods[i] = config->task_config[i].period;
     }
 
     int lcm = get_lcm_from_array(config->num_tasks, periods); // get lowest common multiple
@@ -80,6 +93,7 @@ timeslot_t *simulate_rm(gui_config *config) {
     // initialize the structure with simulated data
     timeslot_t *sim_data = (timeslot_t *) malloc(sizeof(timeslot_t) * lcm);
     for (int i = 0; i < lcm; i++) {
+        sim_data[i].task_id = -1;
         sim_data[i].deadlines = (bool *) malloc(sizeof(bool) * config->num_tasks);
         for (int j = 0; j < config->num_tasks; j++) {
             sim_data[i].deadlines[j] = false;
@@ -101,15 +115,22 @@ timeslot_t *simulate_rm(gui_config *config) {
         running = sim_data[0].task_id;
     }
 
-    for(int i=1; i < lcm; i++) {
+    bool run = true;
+    for(int i=1; i < lcm && run; i++) {
         //printf("-------------------------------- slot: %d -------------------------------- \n", i);
         // update time left based on deadline information
         for (int j =0; j < config->num_tasks; j++) {
             if (sim_data[i].deadlines[j]) {
                 for (int k = 0; k < config->num_tasks; k++) {
                     if (j == runtime[k].task_id) {
-                        // When this update happens runtime[k].time_left must be zero, if not then a deadline miss ocurred
-                        runtime[k].time_left = config->task_config[j].execution;
+                        if (runtime[k].time_left != 0) {
+                            result->miss_idx = i; // this timeslot missed
+                            result->misses[runtime[k].task_id] = true;
+                            run = false;
+                        } else {
+                            // When this update happens runtime[k].time_left must be zero, if not then a deadline miss ocurred
+                            runtime[k].time_left = config->task_config[j].execution;
+                        }
                         break;
                     }
                 }
@@ -117,11 +138,11 @@ timeslot_t *simulate_rm(gui_config *config) {
         }
 
         if (running == -1) {
-            running = config->num_tasks - 1; // look for all tasks
+            running = runtime[config->num_tasks - 1].task_id; // Look for all tasks
         }
 
         // Next task must be one with highest priority or the task it self
-        running = check_highest_priority(running, runtime); // it is possible that the highest priority is the task itself
+        running = check_highest_priority(running, config->num_tasks, runtime); // it is possible that the highest priority is the task itself
         
         if (running != -1) { // there is a task to run
             sim_data[i].task_id = running;
@@ -129,7 +150,7 @@ timeslot_t *simulate_rm(gui_config *config) {
                 if (running == runtime[j].task_id ) {
                     runtime[j].time_left -= 1;
                     if (runtime[j].time_left != 0) {
-                        running = sim_data[j].task_id;
+                        running = runtime[j].task_id;
                     } else {
                         running = -1;
                     }
@@ -142,15 +163,23 @@ timeslot_t *simulate_rm(gui_config *config) {
             sim_data[i].task_id = -1;
         }
 
-        //printf("-------------------------------- END -------------------------------- \n\n\n");
+        //printf("-------------------------------- END SLOT %d -------------------------------- \n\n\n", i);
     }
 
     printf("execution results\n");
 
     for (int i =0; i < lcm; i++) {
-        printf("slot: %d ----> task: %d \n", i, sim_data[i].task_id + 1); // 0 means empty slot when printing
+        printf("slot: %d ----> task: %d \n", i, sim_data[i].task_id+1); // 0 means empty slot when printing
     }
+    printf("MISS IDX: %d\n", result->miss_idx);
+    printf("Failed: [ ");
+    for(int i =0; i < config->num_tasks; i++) {
+        printf("%d ", result->misses[i]);
+    }
+    printf("]\n");
 
-    return sim_data;
+    result->ts = sim_data;
+    result->ts_size = lcm;
+    return result;
 }
 

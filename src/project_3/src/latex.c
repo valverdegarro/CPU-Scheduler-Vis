@@ -56,7 +56,7 @@ int gen_algorithm_static_info(gui_config *config, FILE *fptr_out) {
 
 int gen_execution_tables(gui_config *config, FILE *fptr_out) {
     ttable_params executions[N_ALGORITHMS];
-    int lcm = 20; //TODO: set this with the results from simulate_*
+    int lcm;
 
     for (int i = 0; i < N_ALGORITHMS; i++) {
         executions[i].ts = NULL;
@@ -64,22 +64,27 @@ int gen_execution_tables(gui_config *config, FILE *fptr_out) {
     }
 
     if (config->rm_enabled) {
-        
-        executions[0].ts = simulate_rm(config);
-        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
-        //rm_sim.misses = NULL;
+        sim_data_t * val = simulate_rm(config);
+        executions[0].ts = val->ts;
+        executions[0].miss_idx = val->miss_idx;
+        executions[0].misses = val->misses;
+        lcm = val->ts_size;
     }
 
     if (config->edf_enabled) {
-        executions[1].ts = simulate_rm(config); // TODO: change this to simulate_edf
-        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
-        //rm_sim.misses = NULL;
+        sim_data_t * val = simulate_rm(config);
+        executions[1].ts = val->ts; // TODO: change this to simulate_edf
+        executions[1].miss_idx = val->miss_idx;
+        executions[1].misses = val->misses;
+        lcm = val->ts_size;
     }
 
     if (config->llf_enabled) {
-        executions[2].ts = simulate_rm(config); // TODO: change this to simulate_llf
-        //rm_sim.miss_idx= TODO: assign these once we have access to deadline miss info
-        //rm_sim.misses = NULL;
+        sim_data_t * val = simulate_rm(config);
+        executions[2].ts = val->ts; // TODO: change this to simulate_llf
+        executions[2].miss_idx = val->miss_idx;
+        executions[2].misses = val->misses;
+        lcm = val->ts_size;
     }
 
     write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);

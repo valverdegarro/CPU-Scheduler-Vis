@@ -30,20 +30,25 @@ int main(int argc, char **argv)
     task_config_t *tasks = (task_config_t*) malloc(sizeof(task_config_t) * num_tasks);
 
     // Data from https://www.geeksforgeeks.org/rate-monotonic-scheduling/
+    // tasks[0].execution = 3;
+    // tasks[0].period = 20;
+    // tasks[1].execution = 2;
+    // tasks[1].period = 5;
+    // tasks[2].execution = 2;
+    // tasks[2].period = 10;
+
     tasks[0].execution = 3;
-    tasks[0].period = 20;
-
-    tasks[1].execution = 2;
+    tasks[0].period = 5;
+    tasks[1].execution = 3;
     tasks[1].period = 5;
-
     tasks[2].execution = 2;
-    tasks[2].period = 10;
+    tasks[2].period = 6;
 
     gui_config config;
     config.single_slide = true;
     config.rm_enabled = true;
-    config.edf_enabled = true;
-    config.llf_enabled = true;
+    config.edf_enabled = false;
+    config.llf_enabled = false;
     config.num_tasks = num_tasks;
     config.task_config = tasks;
 

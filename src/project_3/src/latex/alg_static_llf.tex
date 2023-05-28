@@ -1,3 +1,22 @@
 \begin{frame}
-    \frametitle{Informacion estatica para llf}
+    \frametitle{ Least Laxity First (\textbf{LLF}) }
+
+    \begin{exampleblock}{Descripción}
+        Es un algoritmo para sistemas operativos de tiempo real con asignación de prioridades dinámicas basadas en la laxitud de la tarea.
+    \end{exampleblock}
+
+    \begin{itemize}
+        \item Las prioridades son asignadas de acuerdo a la laxitud, que cambia en cada instante de tiempo.
+        \item La tarea con la menor laxitud en un instante determinado va a tener la prioridad más alta que las restantes tareas en ese instante.
+        \item La laxitud se describe como:
+        \begin{equation}
+            L_i = D_i - (t_i + C^r_i)
+        \end{equation}
+        
+        \begin{itemize}
+            \item $D_i$: es el siguiente \textit{deadline} de la tarea en el instante $t_i$.
+            \item $t_i$: el instante de tiempo actual.
+            \item $C^r_i$: el tiempo de computación restante de la tarea en el instante $t_i$.
+        \end{itemize}
+    \end{itemize}
 \end{frame}

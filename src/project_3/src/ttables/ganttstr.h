@@ -20,7 +20,7 @@
                      "  vrule label font=\\tiny,\n"\
                      "  vrule offset=0,\n"\
                      "  expand chart=\\textwidth\n"\
-                     "]{0}"
+                     "]"
 
 
 #define GANTT_TAIL "\n\\end{ganttchart}\n\n"

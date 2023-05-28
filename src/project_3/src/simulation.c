@@ -405,7 +405,7 @@ sim_data_t *simulate_llf(gui_config *config) {
 
 
         // Nothing else to simulate, the plane crashed.
-        if (missed) {
+        if (missed || t == lcm) {
             break;
         }
 

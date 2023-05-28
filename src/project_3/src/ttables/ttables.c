@@ -16,6 +16,8 @@
 
 #define MISS_LABEL_SIZE 5 // Bytes per task
 
+#define TS_PER_SLIDE 30
+
 
 const char* colors[] = {"red", "green", "blue", "magenta", "orange", "cyan"};
 
@@ -24,17 +26,15 @@ const char* alg_names[] = {"RM", "EDF", "LLF"};
 
 /* Private functions */
 
-int append_gheader(FILE *fptr_out, int mcm){
+int append_gheader(FILE *fptr_out, int start, int end){
     char block[BLOCK_SIZE];
-    int last_idx = mcm - 1;
-
 
     // Open the ganttchart environment
-    snprintf(block, BLOCK_SIZE, "%s{%d}\n\n", GANTT_HEADER, last_idx);
+    snprintf(block, BLOCK_SIZE, "%s{%d}{%d}\n\n", GANTT_HEADER, start, end);
     fputs(block, fptr_out);
 
     // Write the title list to show time unit labels
-    snprintf(block, BLOCK_SIZE, "\\gantttitlelist{0,...,%d}{1} \\\\ \n\n", last_idx);
+    snprintf(block, BLOCK_SIZE, "\\gantttitlelist{%d,...,%d}{1} \\\\ \n\n", start, end);
     fputs(block, fptr_out);
 
 
@@ -57,7 +57,7 @@ int append_deadlines(char **blocks, bool *deadlines, int ts_idx, int n_tasks) {
 }
 
 
-int create_ts_blocks(char **blocks, timeslot_t *ts, int size, int n_tasks) {
+int create_ts_blocks(char **blocks, timeslot_t *ts, int ts_start, int ts_end, int n_tasks) {
     char line[LINE_SIZE];
 
     // Variables to keep track of current task and its range
@@ -67,10 +67,10 @@ int create_ts_blocks(char **blocks, timeslot_t *ts, int size, int n_tasks) {
     int end;
 
     // Do an extra loop to print out the last bar
-    for (int i = 0; i < size + 1; i ++) {
+    for (int i = ts_start; i <= ts_end + 1; i ++) {
 
         // Avoid accessing the array in the last loop
-        if (i == size) {
+        if (i == ts_end + 1) {
             task_id = -1;
         } else {
             task_id = ts[i].task_id;
@@ -104,7 +104,7 @@ int create_ts_blocks(char **blocks, timeslot_t *ts, int size, int n_tasks) {
 }
 
 
-int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int size) {
+int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int start, int end) {
     char line[LINE_SIZE];
 
     for (int i = 0; i < n_blocks; i++) {
@@ -129,11 +129,6 @@ int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int size) {
         fputs(blocks[i], fptr_out);
 
 
-        // Add one final deadline at the end
-        snprintf(line, LINE_SIZE, "\\ganttvline{}{%d}\n", size);
-        fputs(line, fptr_out);
-
-
         // Only add newline between blocks
         if (i != n_blocks - 1) {
             fputs(ROW_BREAK, fptr_out);
@@ -145,6 +140,7 @@ int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int size) {
 
 
 int append_misses(FILE *fptr_out, bool *misses, int n_tasks, int miss_idx) {
+
     char block[BLOCK_SIZE];
     char label[n_tasks * MISS_LABEL_SIZE];
 
@@ -178,7 +174,7 @@ int append_misses(FILE *fptr_out, bool *misses, int n_tasks, int miss_idx) {
  * 
  *  - miss_idx:     index of the timeslot where a deadline was missed (-1 if there are no misses)
  */
-int write_ttable(FILE *fptr_out, timeslot_t *ts, int size, int n_tasks, bool *misses, int miss_idx) {
+int write_ttable(FILE *fptr_out, timeslot_t *ts, int start, int end, int n_tasks, bool *misses, int miss_idx) {
 
     int status = 0;
 
@@ -195,22 +191,22 @@ int write_ttable(FILE *fptr_out, timeslot_t *ts, int size, int n_tasks, bool *mi
 
 
     // Open ganttchart environment
-    status = append_gheader(fptr_out, size);
+    status = append_gheader(fptr_out, start, end);
     if (status != 0){
         return -1;
     }
 
 
     // Append bars and deadline commands to each block
-    create_ts_blocks(blocks, ts, size, n_tasks);
+    create_ts_blocks(blocks, ts, start, end, n_tasks);
     
 
     // Concatenate blocks into a single string
-    append_blocks(fptr_out, blocks, n_tasks, size);
+    append_blocks(fptr_out, blocks, n_tasks, start, end);
     
 
-    // Write missed deadlines vrule if neccessary
-    if (miss_idx != -1) {
+    // Write vrule if missed deadline is inside range
+    if (start <= miss_idx && miss_idx <= end + 1) {
         append_misses(fptr_out, misses, n_tasks, miss_idx);
     }
 
@@ -230,38 +226,102 @@ int write_ttable(FILE *fptr_out, timeslot_t *ts, int size, int n_tasks, bool *mi
 }
 
 
-/* Public functions */
+int write_tt_frame(FILE *fptr_out, ttable_params *executions, int alg_idx, int start, int end, int n_tasks, int lcm) {
 
-int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, int lcm, int n_tasks) {
+    int i_start = 0;
+    int i_end = N_ALGORITHMS;
 
-    fputs(BEGIN_FRAME, fptr_out);
+    // Open the frame env
+    if (alg_idx != -1) {
+        fprintf(fptr_out, "\n\\begin{frame}{Simulación de %s (%d-%d)}\n", alg_names[alg_idx], start, end);
+        i_start = alg_idx;
+        i_end = alg_idx + 1;
+    } else{
+        fprintf(fptr_out, "\n\\begin{frame}{Simulación de los algoritmos (%d - %d)}\n", start, end);
+    }
 
-    for (int i = 0; i < N_ALGORITHMS; i++) {
+
+    // Print the gantt charts for the selected algorithm(s)
+    for (int i = i_start; i < i_end; i++){
         if (executions[i].ts != NULL) {
 
-            // Divide slides into different frames according to user input
-            if (!single && i != 0) {
-                fputs("\n\\end{frame}\n\n", fptr_out);
-                fputs(BEGIN_FRAME, fptr_out);
-            }
-
-
-            // Write the ganttchart with the time table
-            fputs("\\textbf{\\small ", fptr_out);
-            fputs(alg_names[i], fptr_out);
-            fputs(":}\n\n", fptr_out);
+            fprintf(fptr_out, "\n\\textbf{%s:}\n\n", alg_names[i]);
 
             write_ttable(
                 fptr_out, 
                 executions[i].ts, 
-                lcm, 
+                start,
+                end, 
                 n_tasks, 
                 executions[i].misses, 
                 executions[i].miss_idx);
         }
     }
+    
 
-    fputs("\n\\end{frame}\n\n", fptr_out);
+    fputs("\n\\end{frame}\n", fptr_out);
+
+    return OK;
+}
+
+
+/* Public functions */
+
+int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, int lcm, int n_tasks) {
+
+    // Variables for keeping track of the range of timeslots we're currently writing
+    int start;
+    int end;
+
+
+    // Variables for single or multi-slide per algorithm functionality
+    int i_start = 0;
+    int i_end = N_ALGORITHMS;
+    int alg_idx;
+
+    if (single) {
+        i_end = i_start + 1;
+        fputs("\n\\section{Simulaciones}\n\n", fptr_out);
+    }
+
+
+    // NOTE: if single is true, the following for statement will only execute one loop
+    // this handles the logic of having all algorithms side-by-side in the same slide or
+    // having them separated
+    for (int i = i_start; i < i_end; i++){
+
+        alg_idx = i;
+
+        if (single) {
+            alg_idx = -1;
+            
+        } else {
+            fprintf(fptr_out, "\n\\section{Simulación de %s}\n\n", alg_names[alg_idx]);
+        }
+
+        // Reset the range in each iteration
+        start = 0;
+        end = 0;
+
+        while (end < lcm) {
+
+            // Increment the end pointer, if it exceeds the lcm then set it to lcm
+            end += TS_PER_SLIDE;
+
+            if(end > lcm) {
+                end = lcm;
+            }
+
+            // Do some writing to the file
+            write_tt_frame(fptr_out, executions, alg_idx, start, end - 1, n_tasks, lcm);
+
+
+            // Update the start pointer
+            start = end;
+        }
+
+    }
+
 
     return OK;
 }

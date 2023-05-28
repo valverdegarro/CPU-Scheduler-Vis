@@ -1,3 +1,15 @@
 \begin{frame}
-    \frametitle{Informacion estatica para edf}
+    \frametitle{ Earliest Deadline First (\textbf{EDF}) }
+
+    \begin{exampleblock}{Descripción}
+        Algoritmo basado en prioridades para sistemas operativos de tiempo real. Las prioridades son asignadas dinámicamente basadas en el \textit{deadline}.
+    \end{exampleblock}
+
+    \begin{itemize}
+        \item Las prioridades son asignadas de acuerdo al \textit{deadline} absoluto. Cuanto más cercano, más alta la prioridad.
+        \item Es eficiente: puede llegar a una utilización del CPU de 100\%.
+        \item Maximiza la utilización del CPU al permitir que las tareas se ejecuten tan pronto como sus \textit{deadlines} llegan.
+        \item Minimiza las probabilidades de incumplimiento de \textit{deadlines}.
+    \end{itemize}
+
 \end{frame}

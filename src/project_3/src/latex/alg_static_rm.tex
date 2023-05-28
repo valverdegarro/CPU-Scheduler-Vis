@@ -1,3 +1,15 @@
 \begin{frame}
-    \frametitle{Informacion estatica para rm}
+    \frametitle{Rate Monotonic (\textbf{RM})}
+
+    \begin{exampleblock}{Descripción}
+        Algoritmo basado en prioridades para sistemas operativos de tiempo real. Las prioridades son asignadas estáticamente.
+    \end{exampleblock}
+
+    \begin{itemize}
+        \item Las prioridades son asignadas de acuerdo al ciclo de duración de la tarea.
+        \item Ciclos de duración resultan en un prioridad más alta para la tarea.
+        \item Si un proceso con una prioridad más alta pasa al estado de ready, expropia al proceso que esta corrriendo actualmente.
+        \item Es óptimo: si cualquier otro algoritmo con prioridades estáticas puede cumplir con los \textit{deadlines}, entonces RM también puede.
+    \end{itemize}
+
 \end{frame}

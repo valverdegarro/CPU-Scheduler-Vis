@@ -10,7 +10,7 @@
                      "  hgrid,\n"\
                      "  vgrid,\n"\
                      "  x unit=.5cm,\n"\
-                     "  y unit chart=.5cm,\n"\
+                     "  y unit chart=%.2fcm,\n"\
                      "  y unit title=.2cm,\n"\
                      "  title/.style={draw=none, fill=none},\n"\
                      "  title label font=\\tiny,\n"\

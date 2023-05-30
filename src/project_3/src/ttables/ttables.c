@@ -1,6 +1,7 @@
 #include "ttables.h"
 #include "ganttstr.h"
 #include "../common.h"
+#include "locale.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -18,22 +19,51 @@
 
 #define TS_PER_SLIDE 30
 
+#define CHART_HEIGHT 1.5 // in CM, per chart
+
+#define CHART_SCALING_FACTOR 2
+
 
 const char* colors[] = {"red", "green", "blue", "magenta", "orange", "cyan"};
 
 const char* alg_names[] = {"RM", "EDF", "LLF"};
 
+static float y_unit_height = 0.0;
+
 
 /* Private functions */
+
+/*
+ * Sets the gantt chart height ('y unit chart' option) using a different scaling for
+ * single slide and multi slide options.
+ */
+int set_y_unit_height(int n_tasks, bool single) {
+    
+    if (single) {
+        
+        y_unit_height = CHART_HEIGHT / n_tasks;
+    
+    } else{
+        y_unit_height = (CHART_SCALING_FACTOR * CHART_HEIGHT) / n_tasks;
+    }
+
+    return OK;
+}
+
 
 int append_gheader(FILE *fptr_out, int start, int end){
     char block[BLOCK_SIZE];
 
+    // This fixes some stupid fprintf formatting bug when using the GTK UI
+    setlocale(LC_NUMERIC, "POSIX");
+
+
     // Open the ganttchart environment
-    snprintf(block, BLOCK_SIZE, "%s{%d}{%d}\n\n", GANTT_HEADER, start, end);
+    fprintf(fptr_out, GANTT_HEADER, y_unit_height);
+    snprintf(block, BLOCK_SIZE, "{%d}{%d}\n\n", start, end);
     fputs(block, fptr_out);
 
-    // Write the title list to show time unit labels
+    // Write the title list to show time axis labels
     snprintf(block, BLOCK_SIZE, "\\gantttitlelist{%d,...,%d}{1} \\\\ \n\n", start, end);
     fputs(block, fptr_out);
 
@@ -110,7 +140,7 @@ int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int start, int en
     for (int i = 0; i < n_blocks; i++) {
 
         // Add some block header stuff such as the label and color
-        snprintf(line, LINE_SIZE, "%% Task %d\n%s{T%d}{0}{0}\n\n", i, ROW_LABEL, i);
+        snprintf(line, LINE_SIZE, "%% Task %d\n%s{ \\footnotesize T%d}{0}{0}\n\n", i, ROW_LABEL, i);
         fputs(line, fptr_out);
 
         int color = i % COLOR_COUNT;
@@ -245,7 +275,7 @@ int write_tt_frame(FILE *fptr_out, ttable_params *executions, int alg_idx, int s
     for (int i = i_start; i < i_end; i++){
         if (executions[i].ts != NULL) {
 
-            fprintf(fptr_out, "\n\\textbf{%s:}\n\n", alg_names[i]);
+            fprintf(fptr_out, "\n\\textbf{ \\scriptsize %s:}\n\n", alg_names[i]);
 
             write_ttable(
                 fptr_out, 
@@ -278,6 +308,15 @@ int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, 
     int i_start = 0;
     int i_end = N_ALGORITHMS;
     int alg_idx;
+
+
+    // Set the chart vertical scaling
+    set_y_unit_height(n_tasks, single);
+
+
+    // Make the frame titles smaller
+    fputs("{ \\setbeamerfont{frametitle}{size=\\scriptsize}\n\n", fptr_out);
+
 
     if (single) {
         i_end = i_start + 1;
@@ -322,6 +361,8 @@ int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, 
 
     }
 
+    // Close the brackets so frame titles go back to normal
+    fputs("\n\n}\n\n", fptr_out);
 
     return OK;
 }

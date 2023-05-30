@@ -1,11 +1,11 @@
 #include "ttables.h"
 #include "ganttstr.h"
 #include "../common.h"
-#include "locale.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <locale.h>
 
 
 #define LINE_SIZE 512
@@ -52,7 +52,6 @@ int set_y_unit_height(int n_tasks, bool single) {
 
 
 int append_gheader(FILE *fptr_out, int start, int end){
-    char block[BLOCK_SIZE];
 
     // This fixes some stupid fprintf formatting bug when using the GTK UI
     setlocale(LC_NUMERIC, "POSIX");
@@ -60,12 +59,10 @@ int append_gheader(FILE *fptr_out, int start, int end){
 
     // Open the ganttchart environment
     fprintf(fptr_out, GANTT_HEADER, y_unit_height);
-    snprintf(block, BLOCK_SIZE, "{%d}{%d}\n\n", start, end);
-    fputs(block, fptr_out);
+    fprintf(fptr_out, "{%d}{%d}\n\n", start, end);
 
     // Write the title list to show time axis labels
-    snprintf(block, BLOCK_SIZE, "\\gantttitlelist{%d,...,%d}{1} \\\\ \n\n", start, end);
-    fputs(block, fptr_out);
+    fprintf(fptr_out, "\\gantttitlelist{%d,...,%d}{1} \\\\ \n\n", start, end);
 
 
     return OK;
@@ -135,24 +132,21 @@ int create_ts_blocks(char **blocks, timeslot_t *ts, int ts_start, int ts_end, in
 
 
 int append_blocks(FILE *fptr_out, char **blocks, int n_blocks, int start, int end) {
-    char line[LINE_SIZE];
 
     for (int i = 0; i < n_blocks; i++) {
 
         // Add some block header stuff such as the label and color
-        snprintf(line, LINE_SIZE, "%% Task %d\n%s{ \\footnotesize T%d}{0}{0}\n\n", i, ROW_LABEL, i);
-        fputs(line, fptr_out);
+        fprintf(fptr_out, "%% Task %d\n%s{ \\footnotesize T%d}{0}{0}\n\n", i, ROW_LABEL, i);
+
 
         int color = i % COLOR_COUNT;
 
-        snprintf(
-            line, LINE_SIZE, 
-            "\\ganttset{bar/.append style={fill=%s!%d},vline/.append style = {%s!%d}}\n\n", 
+        fprintf(
+            fptr_out, 
+            "\\ganttset{bar/.append style={fill=%s!%d},vline/.append style = {%s!%d}}\n\n",
             colors[color], BAR_TRANSP,
-            colors[color], DEADLINE_TRANSP
-        );
+            colors[color], DEADLINE_TRANSP);
 
-        fputs(line, fptr_out);
 
 
         // Concat the block itself

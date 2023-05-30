@@ -5,7 +5,6 @@
 #include <gtk/gtk.h>
 
 // Tweak the following if you need changes in the numberic inputs
-#define MAX_TASKS 10
 #define MAX_PERIOD 1000
 #define MAX_EXEC_TIME 1000
 

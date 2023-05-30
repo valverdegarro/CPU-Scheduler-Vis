@@ -6,6 +6,7 @@
 #define FAIL -1
 #define OK 0
 
+#define MAX_TASKS 10 // if this variable is changed, remember to update table_colors in latex.c
 #define N_ALGORITHMS 3
 
 

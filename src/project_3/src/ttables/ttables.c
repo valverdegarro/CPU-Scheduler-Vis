@@ -323,6 +323,10 @@ int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, 
     // having them separated
     for (int i = i_start; i < i_end; i++){
 
+        if (executions[i].ts == NULL && !single) {
+            continue;
+        }
+
         alg_idx = i;
 
         if (single) {

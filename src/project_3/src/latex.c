@@ -136,7 +136,10 @@ int gen_execution_tables(gui_config *config, FILE *fptr_out) {
         lcm = val->ts_size;
     }
 
-    write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+    if (config->rm_enabled || config->edf_enabled || config->llf_enabled){
+        write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+    }
+    
 
     return OK;
 }

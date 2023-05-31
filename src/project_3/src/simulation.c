@@ -213,7 +213,7 @@ sim_data_t *simulate_rm(gui_config *config) {
         periods[i] = config->task_config[i].period;
     }
 
-    int lcm = get_lcm_from_array(config->num_tasks, periods); // get lowest common multiple
+    int lcm = get_lcm_from_array(config->num_tasks, periods) + 1; // get lowest common multiple
 
 
     // initialize the structure with simulated data
@@ -305,7 +305,7 @@ sim_data_t *simulate_rm(gui_config *config) {
     printf("]\n");
 
     result->ts = sim_data;
-    result->ts_size = lcm;
+    result->ts_size = lcm - 1;
     return result;
 }
 

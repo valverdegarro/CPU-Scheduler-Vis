@@ -4,6 +4,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char table_colors[MAX_TASKS][7] = {
+    //"ECF6CE",
+    //"A4A4A4",
+    //"F781D8",
+    //"8181F7",
+    //"80FF00",
+    //"F4FA58",
+    //"A9D0F5",
+    //"0080FF",
+    //"F5A9F2",
+    //"04B45F",
+    "FF0040",
+    "088A85",
+    "FFCC67",
+    "FFC702",
+    "6200C9",
+    "303498",
+    "FD6864",
+    "F5A9F2",
+    "FE642E",
+    "DF7401"
+    };
+
 int read_static_file(char *filename, FILE *output) {
     char c;
     FILE *file = fopen(filename,"r");
@@ -54,7 +77,33 @@ int gen_algorithm_static_info(gui_config *config, FILE *fptr_out) {
     return OK;
 } 
 
+void table_task_create_ppt(gui_config *config, FILE* file)
+{
+  // Task description table
+  fputs("\\begin{frame}\n", file);
+  fputs("\\frametitle{Tareas}", file);
+  fputs("\\begin{table}[]\n", file);
+  fputs("\\begin{tabular}{|c|c|c|}\n", file);
+  fputs("\\hline\n", file);
+  fputs("\\textbf{ID} & \\textbf{Tiempo de ejecución} & \\textbf{Periodo}", file);
+  fputs("\\\\ \\hline\n", file);
+  for(int i=0; i<config->num_tasks; i++)
+  {
+    fprintf(file, "\\cellcolor[HTML]{%s}%d &", table_colors[i], i);
+    fprintf(file, "\\cellcolor[HTML]{%s}%d &", table_colors[i], config->task_config[i].execution);
+    fprintf(file, "\\cellcolor[HTML]{%s}%d ", table_colors[i], config->task_config[i].period);
+    fputs("\\\\ \\hline\n", file);
+  }
+  fputs("\\end{tabular}\n", file);
+  fputs("\\end{table}\n", file);
+  fputs("\\end{frame}\n", file);
+}
+
 int gen_execution_tables(gui_config *config, FILE *fptr_out) {
+    // print tasks information
+    table_task_create_ppt(config, fptr_out);
+
+
     ttable_params executions[N_ALGORITHMS];
     int lcm;
 
@@ -87,7 +136,10 @@ int gen_execution_tables(gui_config *config, FILE *fptr_out) {
         lcm = val->ts_size;
     }
 
-    write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+    if (config->rm_enabled || config->edf_enabled || config->llf_enabled){
+        write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+    }
+    
 
     return OK;
 }
@@ -102,10 +154,11 @@ int generate_pdf(gui_config *config, FILE *fptr_out) {
     }
 
     // Generate schedulability tests
+    fputs("\\section{Tests de schedulability}\n", fptr_out);
     // TODO
 
     // Generate execution tables
-    //timeslot_t *rm_results = simulate_rm(config);
+    fputs("\\section{Ejecución}\n", fptr_out);
     gen_execution_tables(config, fptr_out);
 
     return OK;

@@ -1,5 +1,6 @@
 #include "common.h"
 #include "simulation.h"
+#include "schedulability.h"
 #include "ttables/ttables.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -145,46 +146,31 @@ int gen_execution_tables(gui_config *config, FILE *fptr_out) {
 }
 
 int gen_tests_schedulability(gui_config *config, FILE *fptr_out) {
-    // print tasks information
+
     table_task_create_ppt(config, fptr_out);
 
-
-    ttable_params executions[N_ALGORITHMS];
-    int lcm;
+    ttest_params executions[N_ALGORITHMS];
 
     for (int i = 0; i < N_ALGORITHMS; i++) {
-        executions[i].ts = NULL;
-        executions[i].miss_idx = -1;
+        executions[i].data = NULL;
+        executions[i].enabled = false;
     }
 
     if (config->rm_enabled) {
-        sim_data_t * val = testability_rm(config);
-        executions[0].ts = val->ts;
-        executions[0].miss_idx = val->miss_idx;
-        executions[0].misses = val->misses;
-        lcm = val->ts_size;
+        sche_data_t * val = testability_rm(config);
+        executions[0].data = val;
+        executions[0].enabled = true;
     }
 
     if (config->edf_enabled) {
-        sim_data_t * val = simulate_edf(config);
-        executions[1].ts = val->ts;
-        executions[1].miss_idx = val->miss_idx;
-        executions[1].misses = val->misses;
-        lcm = val->ts_size;
-    }
-
-    if (config->llf_enabled) {
-        sim_data_t * val = simulate_llf(config);
-        executions[2].ts = val->ts;
-        executions[2].miss_idx = val->miss_idx;
-        executions[2].misses = val->misses;
-        lcm = val->ts_size;
+        sche_data_t * val = testability_edf(config);
+        executions[1].data = val;
+        executions[1].enabled = true;
     }
 
     if (config->rm_enabled || config->edf_enabled || config->llf_enabled){
-        write_ttable_slides(fptr_out, executions, config->single_slide, lcm, config->num_tasks);
+        write_ttest_slides(fptr_out, executions, false, config->num_tasks);
     }
-    
 
     return OK;
 }
@@ -199,8 +185,8 @@ int generate_pdf(gui_config *config, FILE *fptr_out) {
     }
 
     // Generate schedulability tests
-    fputs("\\section{Tests de schedulability}\n", fptr_out);
-    // TODO
+    fputs("\n\\section{Tests de schedulability}\n", fptr_out);
+    gen_tests_schedulability(config, fptr_out);
 
     // Generate execution tables
     fputs("\\section{Ejecución}\n", fptr_out);

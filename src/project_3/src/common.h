@@ -39,6 +39,12 @@ typedef struct sim_data_t {
     int miss_idx;
 } sim_data_t;
 
+typedef struct sche_data_t {
+    task_config_t *task_config;
+    float mu;
+    float u_n_tasks;
+    char *message;
+} sche_data_t;
 
 // Contains all the parameters neccesary which are necessary to draw a time table and that can be different
 // between executions.
@@ -49,5 +55,11 @@ typedef struct ttable_params {
     bool *misses;
     int miss_idx;
 } ttable_params;
+
+typedef struct ttest_params {
+    sche_data_t *data;
+    bool enabled;
+} ttest_params;
+
 
 #endif // COMMON_H

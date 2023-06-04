@@ -50,7 +50,6 @@ int set_y_unit_height(int n_tasks, bool single) {
     return OK;
 }
 
-
 int append_gheader(FILE *fptr_out, int start, int end){
 
     // This fixes some stupid fprintf formatting bug when using the GTK UI
@@ -182,7 +181,6 @@ int append_misses(FILE *fptr_out, bool *misses, int n_tasks, int miss_idx) {
     return OK;
 }
 
-
 /* Writes a single time table (gantt chart environment) to buffer from the given ts_array. 
  *
  * Parameters:
@@ -249,7 +247,6 @@ int write_ttable(FILE *fptr_out, timeslot_t *ts, int start, int end, int n_tasks
     return OK;
 }
 
-
 int write_tt_frame(FILE *fptr_out, ttable_params *executions, int alg_idx, int start, int end, int n_tasks, int lcm) {
 
     int i_start = 0;
@@ -282,6 +279,118 @@ int write_tt_frame(FILE *fptr_out, ttable_params *executions, int alg_idx, int s
         }
     }
     
+
+    fputs("\n\\end{frame}\n", fptr_out);
+
+    return OK;
+}
+
+void write_formula_rm(FILE *fptr_out, sche_data_t *data, int n_tasks) {
+
+    fprintf(fptr_out, "\nFactor de utilización: \n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu = \\sum_{i=1}^{n}\\frac{c_{i}}{p_{i}} \n");
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu=\n");
+    for (int i = 0; i < n_tasks; i++) {
+        fprintf(fptr_out, "\\frac{%d}{%d}", data -> task_config[i].execution, data -> task_config[i].period);
+        if (i + 1 != n_tasks) {
+            fprintf(fptr_out, "+");
+        } else {
+            fprintf(fptr_out, "={%.3f}", data -> mu);
+        }
+    }
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\nCota de utilización: \n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "U(n) = n(2^{\\frac{1}{n}}-1) \n");
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "U({%d}) = {%d}(2^{\\frac{1}{{%d}}}-1) = {%.3f} \n", n_tasks, n_tasks, n_tasks, data -> u_n_tasks);
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\nCondición a cumplir para \\textbf{schedulability}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu \\leq U(n) \n");
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "{%.3f} \\leq {%.3f}\n", data -> mu, data -> u_n_tasks);
+    fprintf(fptr_out, "\\end{equation}\n");
+    
+    fprintf(fptr_out, "\nEl resultado indica que: \n");
+
+    fprintf(fptr_out, "\\begin{quote}\n");
+    fprintf(fptr_out, "\\centering\n");
+    fprintf(fptr_out, "{''%s''}\n", data -> message);
+    fprintf(fptr_out, "\\end{quote}\n");
+}
+
+void write_formula_edf(FILE *fptr_out, sche_data_t *data, int n_tasks) {
+
+    fprintf(fptr_out, "\nFactor de utilización: \n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu = \\sum_{i=1}^{n}\\frac{c_{i}}{p_{i}} \n");
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu=\n");
+    for (int i = 0; i < n_tasks; i++) {
+        fprintf(fptr_out, "\\frac{%d}{%d}", data -> task_config[i].execution, data -> task_config[i].period);
+        if (i + 1 != n_tasks) {
+            fprintf(fptr_out, "+");
+        } else {
+            fprintf(fptr_out, "={%.3f}", data -> mu);
+        }
+    }
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\nCondición a cumplir para \\textbf{schedulability}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "\\mu \\leq 1.0 \n");
+    fprintf(fptr_out, "\\end{equation}\n");
+
+    fprintf(fptr_out, "\\begin{equation}\n");
+    fprintf(fptr_out, "{%.3f} \\leq {%.1f}\n", data -> mu, data -> u_n_tasks);
+    fprintf(fptr_out, "\\end{equation}\n");
+    
+    fprintf(fptr_out, "\nEl resultado indica que: \n");
+
+    fprintf(fptr_out, "\\begin{quote}\n");
+    fprintf(fptr_out, "\\centering\n");
+    fprintf(fptr_out, "{''%s''}\n", data -> message);
+    fprintf(fptr_out, "\\end{quote}\n");
+}
+
+int write_ttest(FILE *fptr_out, ttest_params execution, int alg_idx, int n_tasks) {
+
+    if (alg_idx == 0) {
+        write_formula_rm(fptr_out, execution.data, n_tasks);
+    }
+
+    if (alg_idx == 1) {
+        write_formula_edf(fptr_out, execution.data, n_tasks);
+    }
+
+    free(execution.data);
+
+    return OK;
+}
+
+int write_ttest_frame(FILE *fptr_out, ttest_params execution, int alg_idx, int n_tasks) {
+
+    fprintf(fptr_out, "\n\\begin{frame}{Test de schedulability de %s}\n", alg_names[alg_idx]);
+    
+    write_ttest(fptr_out, execution, alg_idx, n_tasks);
 
     fputs("\n\\end{frame}\n", fptr_out);
 
@@ -364,3 +473,42 @@ int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, 
 
     return OK;
 }
+
+int write_ttest_slides(FILE *fptr_out, ttest_params *executions, bool single, int n_tasks) {
+
+
+    // Variables for single or multi-slide per algorithm functionality
+    int i_start = 0;
+    int i_end = N_ALGORITHMS;
+    int alg_idx;
+
+
+    // Set the chart vertical scaling
+    set_y_unit_height(n_tasks, single);
+
+
+    // Make the frame titles smaller
+    fputs("{ \\setbeamerfont{frametitle}{size=\\scriptsize}\n\n", fptr_out);
+
+    // NOTE: if single is true, the following for statement will only execute one loop
+    // this handles the logic of having all algorithms side-by-side in the same slide or
+    // having them separated
+    for (int i = i_start; i < i_end; i++){
+
+        if (executions[i].enabled == false) {
+            continue;
+        }
+
+        alg_idx = i;
+
+        // Do some writing to the file
+        write_ttest_frame(fptr_out, executions[i], alg_idx, n_tasks);
+
+    }
+
+    // Close the brackets so frame titles go back to normal
+    fputs("\n\n}\n\n", fptr_out);
+
+    return OK;
+}
+

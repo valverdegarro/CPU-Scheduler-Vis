@@ -10,4 +10,7 @@
 int write_ttable_slides(FILE *fptr_out, ttable_params *executions, bool single, int lcm, int n_tasks);
 
 
+int write_ttest_slides(FILE *fptr_out, ttest_params *executions, bool single, int n_tasks);
+
+
 #endif // TTABLES_H

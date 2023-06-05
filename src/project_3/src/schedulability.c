@@ -6,6 +6,8 @@
 #include <math.h>
 #include <string.h>
 
+#define EPSILON 0.000001
+
 sche_data_t *testability_rm(gui_config *config) {
     sche_data_t *result  = (sche_data_t*)malloc(sizeof(sche_data_t));
 
@@ -55,7 +57,7 @@ sche_data_t *testability_edf(gui_config *config) {
 
     result -> mu = mu;
 
-    u_n_tasks = 1.0;
+    u_n_tasks = 1.0 + EPSILON;
 
     result -> u_n_tasks = u_n_tasks;
 

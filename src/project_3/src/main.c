@@ -7,7 +7,7 @@
 
 // Set the following define to 1 if you want to compile with the GUI, 0 otherwise
 // non GUI mode is used for development (faster than using the GUI to execute desired code)
-#define ENABLE_GUI 0
+#define ENABLE_GUI 1
 
 #if ENABLE_GUI==0
 
@@ -22,8 +22,7 @@ int main(int argc, char **argv)
 {
     #if ENABLE_GUI==0
     
-    
-    int num_tasks = 3;
+    int num_tasks = 6;
 
     task_config_t *tasks = (task_config_t*) malloc(sizeof(task_config_t) * num_tasks);
 
@@ -62,6 +61,13 @@ int main(int argc, char **argv)
     tasks[2].execution = 3;
     tasks[2].period = 10;
 
+    tasks[3].execution = 3;
+    tasks[3].period = 8;
+    tasks[4].execution = 2;
+    tasks[4].period = 4;
+    tasks[5].execution = 5;
+    tasks[5].period = 15;
+
 
     // Test data for more than 100% CPU utilization
     //tasks[0].execution = 1;
@@ -83,7 +89,9 @@ int main(int argc, char **argv)
     return latex_execute(&config);
 
     #else
+
     return init_gui(argc, argv);
+    
     #endif
 
 }

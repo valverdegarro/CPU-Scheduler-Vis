@@ -1,5 +1,61 @@
-# Latex installation
 
-sudo apt install texlive-latex-recommended
-sudo apt install texlive
-sudo apt install texlive-pictures
+# Scheduling en Tiempo Real
+
+**Authors**: Gutiérrez Quirós Gerardo, Daniel Piedra, David Valverde Garro
+
+The purpose of this project is to simulate the behavior of various classic scheduling algorithms for Real-Time Operating Systems (RTOS). Given a set of tasks added by the user and the selected algorithm(s) to apply, the project will provide information regarding the algorithm, whether it passes the schedulability test, and finally, simulate the execution of the chosen algorithm. 
+
+To allow user input, a graphical interface will be implemented using GTK, and a Beamer presentation will be generated as output. The entire programming process should be done in C on a Linux platform.
+
+The algorithms to be implemented are:
+- RM: Rate Monotonic
+- EDF: Earliest Deadline First
+- LLF: Least Laxity First
+
+
+## How to compile
+In the same directory as the included Makefile, run:
+
+    make
+
+## How to run the program
+
+    ./project.out
+
+## Inputs on the graphic interface
+
+- **number of tasks**: This value indicates the number of tasks that are going to be simulated with the algorithm.
+
+- **period time**: This value indicates the value of time that each task needs to be execute it in the CPU.
+
+- **execute time**: This value indicates the value of time that each task spends to be execute it in the CPU.
+
+- **algorithms**
+    - **RM** Checks it to apply the execution of the algorithm.
+    - **EDF** Checks it to apply the execution of the algorithm.
+    - **LLF** Checks it to apply the execution of the algorithm.
+
+- **Multiple slide**: If the simulation of the algorithms is going to be separate in multiple slide by each algorithm.
+
+- **Single slide**: If the simulation of the algorithms is going to be together in a single slide by each algorithm.
+
+## Limitations and other comments
+
+- We consider that the entirety of the requested functionality has been implemented as specified in the project description. Our program is able to simulate the expected behavior of the classic scheduling algorithms.
+
+- The only limitation is related with the LCM, when the periods of the tasks are prime numbers, there's a possibility that the beamer output couldn't be generate by the size of the out.tex file. Even though that, the system is robust to some big values.
+
+## Summary of the modules:
+
+- **latex**: have the static files that work as the base to generate the output.
+
+- **ttables**
+    - **ttables.c**: defines functions to write testatibility test, the information of the tasks, and the simulation on the beamer output 
+
+- **gui.c**: main module to define all the objects and the functionality of the graphic interface.
+
+- **latex.c** main module to define all functions used to write on the output .tex file.
+
+- **schedulability.c**: main module to define all functions used to apply the testability tests runs for the algorithms.
+
+- **simulation.c**: main module to define all the functions used to make the simulation of the algorithms.

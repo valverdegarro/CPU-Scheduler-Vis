@@ -333,7 +333,7 @@ void write_formula_rm(FILE *fptr_out, sche_data_t *data, int n_tasks) {
     fprintf(fptr_out, "\\end{quote}\n");
 }
 
-void write_formula_edf(FILE *fptr_out, sche_data_t *data, int n_tasks) {
+void write_formula_edf_llf(FILE *fptr_out, sche_data_t *data, int n_tasks) {
 
     fprintf(fptr_out, "\nFactor de utilización: \n");
 
@@ -356,7 +356,7 @@ void write_formula_edf(FILE *fptr_out, sche_data_t *data, int n_tasks) {
     fprintf(fptr_out, "\nCondición a cumplir para \\textbf{schedulability}\n");
 
     fprintf(fptr_out, "\\begin{equation}\n");
-    fprintf(fptr_out, "\\mu \\leq 1.0 \n");
+    fprintf(fptr_out, "\\mu \\leq 1.0 | \\text{1.0 representa la cantidad de procesadores} \n");
     fprintf(fptr_out, "\\end{equation}\n");
 
     fprintf(fptr_out, "\\begin{equation}\n");
@@ -377,8 +377,8 @@ int write_ttest(FILE *fptr_out, ttest_params execution, int alg_idx, int n_tasks
         write_formula_rm(fptr_out, execution.data, n_tasks);
     }
 
-    if (alg_idx == 1) {
-        write_formula_edf(fptr_out, execution.data, n_tasks);
+    if (alg_idx == 1 || alg_idx == 2) {
+        write_formula_edf_llf(fptr_out, execution.data, n_tasks);
     }
 
     free(execution.data);

@@ -40,7 +40,7 @@ sche_data_t *testability_rm(gui_config *config) {
     return result;
 }
 
-sche_data_t *testability_edf(gui_config *config) {
+sche_data_t *testability_edf_llf(gui_config *config) {
     sche_data_t *result  = (sche_data_t*)malloc(sizeof(sche_data_t));
 
     int num_tasks = config -> num_tasks;
@@ -69,10 +69,5 @@ sche_data_t *testability_edf(gui_config *config) {
         strcpy(result -> message, "It didn't approve the test! Maybe try to schedule those tasks, are not a good idea!\n");
     }
 
-    return result;
-}
-
-sim_data_t *testability_llf(gui_config *config) {
-    sim_data_t *result  = (sim_data_t*)malloc(sizeof(sim_data_t));
     return result;
 }

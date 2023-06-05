@@ -163,9 +163,15 @@ int gen_tests_schedulability(gui_config *config, FILE *fptr_out) {
     }
 
     if (config->edf_enabled) {
-        sche_data_t * val = testability_edf(config);
+        sche_data_t * val = testability_edf_llf(config);
         executions[1].data = val;
         executions[1].enabled = true;
+    }
+
+    if (config->llf_enabled) {
+        sche_data_t * val = testability_edf_llf(config);
+        executions[2].data = val;
+        executions[2].enabled = true;
     }
 
     if (config->rm_enabled || config->edf_enabled || config->llf_enabled){

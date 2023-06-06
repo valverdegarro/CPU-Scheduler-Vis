@@ -12,6 +12,11 @@ The algorithms to be implemented are:
 - EDF: Earliest Deadline First
 - LLF: Least Laxity First
 
+## Installation libraries
+
+    sudo apt install texlive-latex-recommended
+    sudo apt install texlive
+    sudo apt install texlive-pictures
 
 ## How to compile
 In the same directory as the included Makefile, run:
